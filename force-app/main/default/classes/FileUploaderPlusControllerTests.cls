@@ -38,12 +38,53 @@ class FileUploaderPlusControllerTests {
     }
 
     @IsTest
-    static void UpdateFieldsOnFile_BadDocumentId_Vomit() {
+    static void UpdateFieldsOnFile_BadDocumentId_ThrowAuraHandledException() {
         Arg my = getArgs();
         String badId = '06956000000ubmPAAQ';
 
         Test.startTest();
-        FileUploaderPlusController.UpdateFieldsOnFile(badId, my.fieldsToUpdate);
+        Boolean didThrow = false;
+        try {
+            FileUploaderPlusController.UpdateFieldsOnFile(badId, my.fieldsToUpdate);
+        } catch (AuraHandledException e) {
+            didThrow = true;
+        }
         Test.stopTest();
+
+        System.assertEquals(true, didThrow, 'AuraHandledException was not thrown');
+    }
+
+    @IsTest
+    static void UpdateFieldsOnFile_InvalidFieldApiName_Vomit() {
+        Arg my = getArgs();
+        my.fieldsToUpdate.put('InvalidApiName', 'SomeValue');
+
+        Test.startTest();
+        Boolean didThrow = false;
+        try {
+            FileUploaderPlusController.UpdateFieldsOnFile(my.cv.ContentDocumentId, my.fieldsToUpdate);
+        } catch (AuraHandledException e) {
+            didThrow = true;
+        }
+        Test.stopTest();
+
+        System.assertEquals(true, didThrow, 'AuraHandledException was not thrown');
+    }
+
+    @IsTest
+    static void UpdateFieldsOnFile_InvalidValueForField_Vomit() {
+        Arg my = getArgs();
+        my.fieldsToUpdate.put('Title', 'This is more than 255 characters long. This is more than 255 characters long. This is more than 255 characters long. This is more than 255 characters long. This is more than 255 characters long. This is more than 255 characters long. This is more than 255 characters long. ');
+
+        Test.startTest();
+        Boolean didThrow = false;
+        try {
+            FileUploaderPlusController.UpdateFieldsOnFile(my.cv.ContentDocumentId, my.fieldsToUpdate);
+        } catch (AuraHandledException e) {
+            didThrow = true;
+        }
+        Test.stopTest();
+
+        System.assertEquals(true, didThrow, 'AuraHandledExcpetion was not thrown');
     }
 }
