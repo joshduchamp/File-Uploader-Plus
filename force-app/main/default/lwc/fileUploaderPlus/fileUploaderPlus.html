@@ -1,0 +1,55 @@
+<template>
+    <lightning-card title="File Upload" icon-name="action:add_file">
+        <div class="slds-m-horizontal_medium">
+            <template iterator:it={customFields}>
+                <div key={it.value.apiName} data-index={it.index} class="slds-m-bottom_small">
+                    <template if:true={it.value.useTextInput}>
+                        <lightning-input
+                            type="text"
+                            label={it.value.label}
+                            value={it.value.value}
+                            onchange={handleCustomFieldValueChanged}
+                            max-length={it.value.length}
+                            required={it.value.required}></lightning-input>
+                    </template>
+                    <template if:true={it.value.useTextArea}>
+                        <lightning-textarea
+                            label={it.value.label}
+                            value={it.value.value}
+                            onchange={handleCustomFieldValueChanged}
+                            max-length={it.value.length}
+                            required={it.value.required}></lightning-textarea>
+                    </template>
+                    <template if:true={it.value.useComboBox}>
+                        <lightning-combobox
+                            label={it.value.label}
+                            value={it.value.value}
+                            onchange={handleCustomFieldValueChanged}
+                            options={it.value.picklistValues} 
+                            required={it.value.required}></lightning-combobox>
+                    </template>
+                </div>
+            </template>
+            <div class="slds-m-bottom_small">
+                <lightning-file-upload 
+                    label="Upload file"
+                    record-id={recordId}
+                    onuploadfinished={handleFileUploadFinished}
+                    disabled={disableFileUpload}>
+                </lightning-file-upload>
+            </div>
+        </div>
+        <template for:each={uploadedFiles} for:item="file">
+            <div class="slds-m-top_medium" key={file.documentId}>
+                <lightning-card variant="Narrow" title={file.title} icon-name="standard:file">
+                    <template for:each={file.fields} for:item="field">
+                        <div key={field.apiName} class="slds-m-horizontal_medium">
+                            <span class="slds-text-color_weak">{field.label}: </span>
+                            <span class="slds-text-color_default">{field.value}</span>
+                        </div>
+                    </template>
+                </lightning-card>
+            </div>
+        </template>
+    </lightning-card>
+</template>
