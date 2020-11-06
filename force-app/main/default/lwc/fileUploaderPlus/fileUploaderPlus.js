@@ -11,6 +11,10 @@ export default class FileUploaderPlus extends LightningElement {
     @api customFieldRequired2;
     @api customFieldApiName3;
     @api customFieldRequired3;
+    @api customFieldApiName4;
+    @api customFieldRequired4;
+    @api customFieldApiName5;
+    @api customFieldRequired5;
     @track customFields = [];
     @track disableFileUpload = true;
     @track uploadedFiles = [];
@@ -24,6 +28,8 @@ export default class FileUploaderPlus extends LightningElement {
             this.tryAddCustomField(this.customFieldApiName, this.contentVersionInfo, picklistValues, this.customFieldRequired);
             this.tryAddCustomField(this.customFieldApiName2, this.contentVersionInfo, picklistValues, this.customFieldRequired2);
             this.tryAddCustomField(this.customFieldApiName3, this.contentVersionInfo, picklistValues, this.customFieldRequired3);
+            this.tryAddCustomField(this.customFieldApiName4, this.contentVersionInfo, picklistValues, this.customFieldRequired4);
+            this.tryAddCustomField(this.customFieldApiName5, this.contentVersionInfo, picklistValues, this.customFieldRequired5);
             this.updateDisableFileUpload();
         }
     }

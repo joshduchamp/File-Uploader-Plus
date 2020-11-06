@@ -15,6 +15,10 @@
             <property label="Custom Field 2 Required" name="customFieldRequired2" type="Boolean" default="false" />
             <property label="Custom Field 3 API Name" name="customFieldApiName3" type="String" />
             <property label="Custom Field 3 Required" name="customFieldRequired3" type="Boolean" default="false" />
+            <property label="Custom Field 4 API Name" name="customFieldApiName4" type="String" />
+            <property label="Custom Field 4 Required" name="customFieldRequired4" type="Boolean" default="false" />
+            <property label="Custom Field 5 API Name" name="customFieldApiName5" type="String" />
+            <property label="Custom Field 5 Required" name="customFieldRequired5" type="Boolean" default="false" />
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>
