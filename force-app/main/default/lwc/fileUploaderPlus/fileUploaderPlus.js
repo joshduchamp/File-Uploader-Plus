@@ -1,5 +1,5 @@
 import { LightningElement, api, track, wire } from 'lwc';
-import updateFileOnField from '@salesforce/apex/FileUploaderPlusController.UpdateFieldsOnFile';
+import updateFieldsOnFile from '@salesforce/apex/FileUploaderPlusController.UpdateFieldsOnFile';
 import { getObjectInfo, getPicklistValuesByRecordType } from 'lightning/uiObjectInfoApi';
 import CONTENT_VERSION_OBJECT from '@salesforce/schema/ContentVersion';
 
@@ -69,45 +69,42 @@ export default class FileUploaderPlus extends LightningElement {
         });
     }
 
-    handleFileUploadFinished(event) {
+    async handleFileUploadFinished(event) {
         if (event.detail.files == null || event.detail.files.length < 1) {
             alert('Failed to upload file');
             return;
         }
+        let documentId = event.detail.files[0].documentId;
+        let file = {
+            title: event.detail.files[0].name,
+            documentId: documentId,
+            fields: []
+        };
         let hasFieldsToUpdate = this.customFields.length > 0;
         if (hasFieldsToUpdate) {
-            let documentId = event.detail.files[0].documentId;
-            let file = {
-                title: event.detail.files[0].name,
-                documentId: documentId,
-                fields: []
-            };
-            let params = {
-                documentId: documentId,
-                fieldsToUpdate: {}
-            };
-            this.customFields.forEach(cf => {
-                params.fieldsToUpdate[cf.apiName] = cf.value;
+            await this.updateFields(documentId);
+            file.fields = this.customFields.map((cf) => {
+                return { apiName: cf.apiName, label: cf.label, value: cf.value }
             });
-            updateFileOnField(params)
-                .then((res) => {
-                    if (res == false) {
-                        alert('Failed to update fields on file');
-                    } else {
-                        file.fields = this.customFields.map((cf) => {
-                            return { apiName: cf.apiName, label: cf.label, value: cf.value }
-                        });
-                    }
-                })
-                .catch((err) => {
-                    alert('Failed to update fields on file');
-                    console.log(err);
-                })
-                .finally(() => {
-                    this.uploadedFiles.push(file);
-                    this.refreshComponent();
-                });
         }
+        this.uploadedFiles.push(file);
+        this.refreshComponent();
+    }
+
+    async updateFields(documentId) {
+        let params = {
+            documentId: documentId,
+            fieldsToUpdate: {}
+        };
+        this.customFields.forEach(cf => {
+            params.fieldsToUpdate[cf.apiName] = cf.value;
+        });
+        var promise = updateFieldsOnFile(params)
+            .catch((err) => {
+                alert('Failed to update fields on file');
+                console.log(err);
+            });
+        return promise;
     }
 
     refreshComponent() {
