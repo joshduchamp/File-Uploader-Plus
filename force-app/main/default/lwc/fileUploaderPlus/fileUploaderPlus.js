@@ -34,7 +34,7 @@ export default class FileUploaderPlus extends LightningElement {
         }
     }
 
-    supportedDataTypes = ['String', 'Picklist', 'TextArea'];
+    supportedDataTypes = ['String', 'Picklist', 'TextArea', 'Boolean'];
 
     tryAddCustomField(apiName, contentVersionInfo, picklistValues, required) {
         if(apiName != null) {
@@ -44,7 +44,7 @@ export default class FileUploaderPlus extends LightningElement {
             }
             let cf = {
                 apiName: apiName,
-                value: null,
+                defaultValue: fieldInfo.dataType == 'Boolean' ? false : null,
                 label: fieldInfo.label,
                 dataType: fieldInfo.dataType,
                 length: fieldInfo.length,
@@ -52,8 +52,10 @@ export default class FileUploaderPlus extends LightningElement {
                 picklistValues: [],
                 useTextInput: fieldInfo.dataType == 'String',
                 useComboBox: fieldInfo.dataType == 'Picklist',
-                useTextArea: fieldInfo.dataType == 'TextArea'
+                useTextArea: fieldInfo.dataType == 'TextArea',
+                useCheckbox: fieldInfo.dataType == 'Boolean'
             };
+            cf.value = cf.defaultValue;
             if (cf.dataType == 'Picklist') {
                 cf.picklistValues = picklistValues.picklistFieldValues[apiName].values.map((v) => {
                     return { label: v.label, value: v.value };
@@ -65,7 +67,12 @@ export default class FileUploaderPlus extends LightningElement {
 
     handleCustomFieldValueChanged(event) {
         let index = event.target.closest('[data-index]').dataset.index;
-        this.customFields[index].value = event.detail.value;
+        let cf = this.customFields[index];
+        if (cf.useCheckbox) {
+            cf.value = event.detail.checked;
+        } else {
+            cf.value = event.deatil.value;
+        }
         this.updateDisableFileUpload();
     }
 
@@ -114,7 +121,9 @@ export default class FileUploaderPlus extends LightningElement {
     }
 
     refreshComponent() {
-        this.customFields.forEach((cf) => { cf.value = null});
+        this.customFields.forEach((cf) => { 
+            cf.value = cf.defaultValue;
+        });
         this.updateDisableFileUpload();
     }
 }

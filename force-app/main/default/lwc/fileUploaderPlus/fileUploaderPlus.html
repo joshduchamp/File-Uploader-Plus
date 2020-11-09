@@ -28,6 +28,14 @@
                             options={it.value.picklistValues} 
                             required={it.value.required}></lightning-combobox>
                     </template>
+                    <template if:true={it.value.useCheckbox}>
+                        <lightning-input
+                            type="checkbox"
+                            label={it.value.label}
+                            checked={it.value.value}
+                            onchange={handleCustomFieldValueChanged}
+                            required={it.value.required}></lightning-input>
+                    </template>
                 </div>
             </template>
             <div class="slds-m-bottom_small">
